@@ -1,0 +1,15 @@
+---
+- hosts: all
+  remote_user: root
+  roles:
+    - { role: rvm.ruby,
+        tags: ruby,
+        rvm1_rubies: ['ruby-2.5.8'],
+        rvm1_user: 'root',
+        rvm1_install_path: '/usr/local/rvm'
+        # rvm1_bundler_install: true
+      }
+    - app
+    - puma
+    - nginx
+

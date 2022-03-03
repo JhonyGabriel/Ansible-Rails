@@ -1,0 +1,24 @@
+---
+- name: Configura aplicação no Nginx
+  template:
+    src: rails_app.conf
+    dest: /etc/nginx/sites-available/{{ app_name }}
+
+- name: Linka sites-enabled com sites-available
+  file:
+    src: /etc/nginx/sites-available/{{ app_name }}
+    dest: /etc/nginx/sites-enabled/{{ app_name }}
+    state: link
+
+- name: Configura certificados SSL's
+  become: true
+  command: "certbot certonly --webroot -d {{ nginx_domain }} --agree-tos -m {{ email_from }}"
+
+- name: Reinicia o puma
+  systemd: name=puma.{{ app_name }}.service state=reloaded 
+
+- name: Reinicializa Nginx
+  systemd: name=nginx state=reloaded
+
+
+

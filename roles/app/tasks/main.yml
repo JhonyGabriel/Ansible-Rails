@@ -1,0 +1,58 @@
+---
+- name: Verifica o repositório
+  stat:
+    path: /var/www/{{ app_name }}/
+  register: app_dir
+
+- name: Clona o repositório
+  git:
+    repo: "{{ repo_git }}"
+    dest: /var/www/{{ app_name }}
+    clone: yes
+    update: yes
+  when: not app_dir.stat.exists
+
+- name: Define o gemset
+  command: bash -lc "/usr/local/rvm/bin/rvm alias create {{ app_name }} ruby-{{ ruby_version }}@{{ app_name }} --create"
+  args:
+    chdir: /var/www/{{ app_name }}/
+    creates: /usr/local/rvm/wrappers/ruby-{{ ruby_version }}@{{ app_name }}
+    
+- name: Instala o Bundler
+  command: bash -lc "/usr/local/rvm/bin/rvm {{ app_name }} do gem install bundler"
+  args:
+    chdir: /var/www/{{app_name}}/
+    creates: /usr/local/rvm/wrappers/ruby-{{ ruby_version }}@{{ app_name }}/bundler
+
+- name: Instala as Gems do projeto
+  command: bash -lc "/usr/local/rvm/bin/rvm {{ app_name }} do bundle install"
+  args:
+    chdir: /var/www/{{ app_name }}/
+
+- name: Verifica se o application.yml existe
+  stat:
+    path: /var/www/{{ app_name }}/config/application.yml
+  register: arquivo_application
+
+- name: Instala o Fígaro
+  command: bash -lc "/usr/local/rvm/bin/rvm {{ app_name }} do bundle exec figaro install"
+  args:
+    chdir: /var/www/{{ app_name }}/
+  when: not arquivo_application.stat.exists
+
+- name: Copia as variáveis de ambiente
+  template:
+    src: application.yml
+    dest: /var/www/{{ app_name }}/config/application.yml
+  when: not arquivo_application.stat.exists
+
+- name: Verifica o assets
+  stat:
+    path: /var/www/{{ app_name }}/public/assets
+  register: assets
+
+- name: Precompila a aplicação
+  command: bash -lc "/usr/local/rvm/bin/rvm {{ app_name }} do rake assets:precompile"
+  args:
+    chdir: /var/www/{{ app_name }}/
+  when: not assets.stat.exists

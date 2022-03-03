@@ -1,0 +1,32 @@
+---
+- name: Seta configuração do puma.rb
+  template:
+    src: puma.rb
+    dest: /var/www/{{app_name}}/config/puma.rb
+  
+- name: Criar pasta compartilhada
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+   - /var/www/{{ app_name }}/shared/pids
+   - /var/www/{{ app_name }}/shared/sockets
+   - /var/www/{{ app_name }}/shared/log
+
+- name: Cria o puma como serviço
+  template:
+    src: puma.service
+    dest: /etc/systemd/system/puma.{{ app_name }}.service
+
+- name: Recarrega o systemd e inicia o puma
+  systemd:
+    state: started
+    enabled: yes
+    daemon_reload: yes
+    name: puma.{{ app_name }}.service
+
+- import_tasks: iptables.yml 
+
+
+
+
