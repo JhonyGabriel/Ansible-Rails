@@ -19,7 +19,7 @@
 #   command: "certbot certonly --webroot -w /var/www/{{ app_name }} -d {{ nginx.domain }} --agree-tos -m {{ email_from }}"
 #   when: not ssl_cert.stat.exists
 
-- name: Reinicia o puma
+- name: Reinicializa puma
   systemd: name=puma.{{ app_name }}.service state=reloaded 
 
 - name: Reinicializa Nginx
