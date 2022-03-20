@@ -3,7 +3,7 @@
   iptables:
     chain: INPUT
     protocol: tcp
-    destination_port: "{{ tcp_port }}"
+    destination_port: "{{ puma.tcp_port }}"
     jump: DROP
   become: true
 
@@ -11,7 +11,7 @@
   iptables:
     chain: INPUT
     protocol: tcp
-    destination_port: "{{ ssl_port }}"
+    destination_port: "{{ puma.ssl_port }}"
     jump: DROP
   become: true
 
@@ -20,7 +20,7 @@
     chain: INPUT
     protocol: tcp
     source: localhost
-    destination_port: "{{ tcp_port }}"
+    destination_port: "{{ puma.tcp_port }}"
     jump: ACCEPT
   become: true
 
@@ -29,6 +29,6 @@
     chain: INPUT
     protocol: tcp
     source: localhost
-    destination_port: "{{ ssl_port }}"
+    destination_port: "{{ puma.ssl_port }}"
     jump: ACCEPT
   become: true

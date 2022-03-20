@@ -19,7 +19,7 @@
     # Set up socket location
     bind "unix://#{shared_dir}/sockets/{{ app_name }}.sock"
     bind "tcp://0.0.0.0:{{ puma.tcp_port }}"
-    bind 'ssl://0.0.0.0:{{ puma.ssl_port }}?key=/etc/letsencrypt/live/{{ nginx_domain }}/privkey.pem&cert=/etc/letsencrypt/live/{{ nginx_doamin }}/cert.pem'
+    # bind 'ssl://0.0.0.0:{{ puma.ssl_port }}?key=/etc/letsencrypt/live/{{ nginx.domain }}/privkey.pem&cert=/etc/letsencrypt/live/{{ nginx.domain }}/cert.pem'
     
     # Logging
     stdout_redirect "#{shared_dir}/log/{{ app_name }}.stdout.log", "#{shared_dir}/log/{{ app_name }}.stderr.log", true

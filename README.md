@@ -1,13 +1,10 @@
-# Autor: Jhony Araújo <jhony.gabriell214@gmail.com>
-# Data de criação: Fev/2022
-
 ## Deploy de Aplicação Ruby on Rails com Ansible
 
 Playbook Ansible para configurar aplicação Rails + Puma + Nginx
 
 ## Requerimentos
 
-    + Servidor: CentOS 7 ou superior com banco de dados e Nginx pré-instalados
+    + Servidor: Ubuntu Server 20.04 com banco de dados e Nginx pré-instalados
     
     + Cliente: Ansible 2.9 ou superior
 
@@ -35,4 +32,4 @@ Após a execução é necessário popular o banco de dados ou aplicar o dump da 
 
 ## Considerações
 
-Deploy realizado com Ruby na versão 2.5.8 e Rails 5.2.0
+Deploy realizado com Ruby na versão 2.5.3 e Rails 6.0.3

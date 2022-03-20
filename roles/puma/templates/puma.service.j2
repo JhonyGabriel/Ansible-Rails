@@ -31,7 +31,7 @@ WorkingDirectory=/var/www/{{ app_name }}
 # an absolute URL to puma. For example /usr/local/bin/puma
 # Alternatively, create a binstub with `bundle binstubs puma --path ./sbin` in the WorkingDirectory
 
-ExecStart=/usr/local/rvm/bin/rvm default do bundle exec puma -C /var/www/{{ app_name }}/config/puma.rb 
+ExecStart=/usr/local/rvm/bin/rvm {{ app_name }} do bundle exec puma -C /var/www/{{ app_name }}/config/puma.rb 
 
 ExecReload=/bin/kill -TSTP $MAINPID
 

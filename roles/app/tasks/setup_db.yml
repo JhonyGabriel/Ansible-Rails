@@ -1,0 +1,41 @@
+---
+- name: Cria BD PSQL
+  postgresql_db:
+    login_password: "{{ postgres.superUserPassword }}"
+    name: "{{ postgres.database }}"
+  become: true
+  become_user: postgres
+  when: postgres.database is defined
+
+- name: Cria usuário BD PSQL
+  postgresql_user:
+    login_password: "{{ postgres.superUserPassword }}"
+    db: "{{ postgres.database }}"
+    name: "{{ postgres.username }}"
+    password: "{{ postgres.password }}"
+    priv: ALL
+    encrypted: yes
+    role_attr_flags: CREATEDB,NOSUPERUSER
+  become: true
+  become_user: postgres
+  when: postgres.database is defined
+
+- name: Cria BD MySQL
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql.superUserPassword }}"
+    name: "{{ mysql.database }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  when: mysql.database is defined
+
+- name: Cria usuário BD MySQL
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql.superUserPassword }}"
+    name: "{{ mysql.username }}"
+    password: "{{ mysql.password }}"
+    priv: '*.*:ALL'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  when: mysql.database is defined

@@ -1,8 +1,16 @@
 ---
 - name: Seta configuração do puma.rb
   template:
-    src: puma.rb
+    src: puma.rb.j2
     dest: /var/www/{{app_name}}/config/puma.rb
+
+- name: Remove o force SSL
+  lineinfile:
+    dest: /var/www/{{ app_name }}/config/environments/production.rb
+    regexp: '^config.force_ssl = true'
+    line: 'config.force_ssl = false'
+    backrefs: yes
+  become: true
   
 - name: Criar pasta compartilhada
   file:
@@ -15,7 +23,7 @@
 
 - name: Cria o puma como serviço
   template:
-    src: puma.service
+    src: puma.service.j2
     dest: /etc/systemd/system/puma.{{ app_name }}.service
 
 - name: Recarrega o systemd e inicia o puma
@@ -25,7 +33,7 @@
     daemon_reload: yes
     name: puma.{{ app_name }}.service
 
-- import_tasks: iptables.yml 
+# - import_tasks: iptables.yml 
 
 
 

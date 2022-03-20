@@ -1,7 +1,7 @@
 ---
 - name: Configura aplicação no Nginx
   template:
-    src: rails_app.conf
+    src: rails_app.conf.j2
     dest: /etc/nginx/sites-available/{{ app_name }}
 
 - name: Linka sites-enabled com sites-available
@@ -10,15 +10,18 @@
     dest: /etc/nginx/sites-enabled/{{ app_name }}
     state: link
 
-- name: Configura certificados SSL's
-  become: true
-  command: "certbot certonly --webroot -d {{ nginx_domain }} --agree-tos -m {{ email_from }}"
+# - name: Verifica se o certificado SSL existe
+#   stat:
+#     path: /etc/letsencrypt/live/{{ nginx.domain }}/privkey.pem
+#   register: ssl_cert
+
+# - name: Configura certificados SSL's
+#   command: "certbot certonly --webroot -w /var/www/{{ app_name }} -d {{ nginx.domain }} --agree-tos -m {{ email_from }}"
+#   when: not ssl_cert.stat.exists
 
 - name: Reinicia o puma
   systemd: name=puma.{{ app_name }}.service state=reloaded 
 
 - name: Reinicializa Nginx
   systemd: name=nginx state=reloaded
-
-
-
+  

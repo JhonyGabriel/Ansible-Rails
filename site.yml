@@ -4,10 +4,10 @@
   roles:
     - { role: rvm.ruby,
         tags: ruby,
-        rvm1_rubies: ['ruby-2.5.8'],
+        rvm1_rubies: ['ruby-2.5.3'],
         rvm1_user: 'root',
-        rvm1_install_path: '/usr/local/rvm'
-        # rvm1_bundler_install: true
+        rvm1_install_path: '/usr/local/rvm',
+        rvm1_bundler_install: false     
       }
     - app
     - puma

@@ -1,4 +1,6 @@
 ---
+- import_tasks: setup_db.yml
+
 - name: Verifica o repositório
   stat:
     path: /var/www/{{ app_name }}/
@@ -11,6 +13,24 @@
     clone: yes
     update: yes
   when: not app_dir.stat.exists
+
+- name: Remove arquivo ruby-version
+  shell: rm -rf /var/www/{{ app_name }}/.ruby-version
+
+- name: Verifica Gemfile.lock
+  stat: path=/var/www/{{ app_name }}/Gemfile.lock
+  register: Gemfilelock_stat
+
+- name: Remove arquivo Gemfile.lock
+  copy: remote_src=True src=/var/www/{{ app_name }}/Gemfile.lock dest=/var/www/{{ app_name }}/Gemfile.lock.old
+  when: Gemfilelock_stat.stat.exists
+
+- name: Muda versão do Ruby no Gemfile
+  ansible.builtin.replace:
+    dest: /var/www/{{ app_name }}/Gemfile
+    regexp: "^ruby '[0-9].[0-9].[0-9]'"
+    replace: "ruby '{{ ruby_version }}'"
+  become: true
 
 - name: Define o gemset
   command: bash -lc "/usr/local/rvm/bin/rvm alias create {{ app_name }} ruby-{{ ruby_version }}@{{ app_name }} --create"
@@ -42,9 +62,16 @@
 
 - name: Copia as variáveis de ambiente
   template:
-    src: application.yml
+    src: application.yml.j2
     dest: /var/www/{{ app_name }}/config/application.yml
-  when: not arquivo_application.stat.exists
+
+- name: Remove require_master_key
+  shell: rm -rf /var/www/{{ app_name }}/config/credentials.yml.enc && rm -rf /var/www/{{ app_name }}/config/master.key
+
+- name: Cria credentials.yml.enc 
+  command: bash -lc "EDITOR=mate /usr/local/rvm/bin/rvm {{ app_name }} do rails credentials:edit"
+  args:
+    chdir: /var/www/{{ app_name }}/
 
 - name: Verifica o assets
   stat:
