@@ -7,7 +7,6 @@ ruby_version:
 email_from: 
 
 nginx:
-  public_ip: 
   domain: 
 
 # Comentar caso não utilizar

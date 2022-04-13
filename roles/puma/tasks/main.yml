@@ -7,7 +7,7 @@
 - name: Remove o force SSL
   lineinfile:
     dest: /var/www/{{ app_name }}/config/environments/production.rb
-    regexp: '^config.force_ssl = true'
+    regexp: 'config.force_ssl = true'
     line: 'config.force_ssl = false'
     backrefs: yes
   become: true
@@ -32,9 +32,3 @@
     enabled: yes
     daemon_reload: yes
     name: puma.{{ app_name }}.service
-
-# - import_tasks: iptables.yml 
-
-
-
-
