@@ -8,7 +8,7 @@
   lineinfile:
     dest: /var/www/{{ app_name }}/config/environments/production.rb
     regexp: 'config.force_ssl = true'
-    line: 'config.force_ssl = false'
+    line: '  config.force_ssl = false'
     backrefs: yes
   become: true
   
